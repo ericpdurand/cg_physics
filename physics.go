@@ -45,7 +45,8 @@ func distP(x1, y1, x2, y2 float64) float64 {
 }
 
 func dot(v1, v2 Vect) float64 {
-	return distP(0, 0, v1.x, v1.y) * distP(0, 0, v2.x, v2.y) * math.Cos(math.Atan2(v2.y-v1.y, v2.x-v1.x))
+	//return distP(0, 0, v1.x, v1.y) * distP(0, 0, v2.x, v2.y) * math.Cos(math.Atan2(v2.y-v1.y, v2.x-v1.x))
+	return v1.x*v2.x + v1.y*v2.y
 }
 
 func isCollision(e1, e2 Entity) (isColl bool, result float64) {
