@@ -52,17 +52,20 @@ func dot(v1, v2 Vect) float64 {
 func isCollision(e1, e2 Entity) (isColl bool, result float64) {
 	// If speed norm is less than dist less radiuses, then no Collision
 	sNorm := distP(e1.vx, e1.vy, e2.vx, e2.vy)
+	//fmt.Printf("sNorm: %v \n", sNorm)
 	if sNorm < dist(e1, e2)-float64(e1.r+e2.r) {
 		return false, 0
 	}
 	// Normalize V -> N
 	N := Vect{e1.vx + e2.vx, e1.vy + e2.vy}
 	N.normalize()
+	//fmt.Printf("N: %v \n", N)
 	// Find vector C between centers
 	C := Vect{e2.x - e1.x, e2.y - e1.y}
 	// Compute product
 	lengthC := distP(0, 0, C.x, C.y)
 	D := dot(N, C)
+	//fmt.Printf("D, lengthC: %v %v \n", D, lengthC)
 	// if direction is opposite, no Collision
 	if D <= 0 {
 		return false, 0
@@ -70,6 +73,7 @@ func isCollision(e1, e2 Entity) (isColl bool, result float64) {
 	//Get F length
 	F := lengthC*lengthC - D*D
 	sumR2 := (e1.r + e2.r) * (e1.r + e2.r)
+	//fmt.Printf("F, sumR2: %v %v \n", F, sumR2)
 	if F >= sumR2 {
 		return false, 0
 	}
@@ -79,11 +83,13 @@ func isCollision(e1, e2 Entity) (isColl bool, result float64) {
 	}
 	// Dist to travel
 	dist := D - math.Sqrt(T)
+	//fmt.Printf("dist: %v \n", dist)
 	if sNorm < dist {
 		return false, 0
 	}
 	// Compute the ratio
 	ratio := dist / sNorm
+	//fmt.Printf("ratio: %v \n", ratio)
 	return true, ratio
 }
 
@@ -95,18 +101,28 @@ func computeMove(e1, e2 Entity, ratio float64) (ne1, ne2 Entity) {
 	e2.y = e2.y + ratio*e2.vy
 	// Compute the new speed vectors
 	N := Vect{e2.x - e1.x, e2.y - e1.y}
+	//fmt.Printf("N: %v \n", N)
 	N.normalize()
 	v1 := Vect{e1.vx, e1.vy}
 	v2 := Vect{e2.vx, e2.vy}
-	a1 := dot(N, v1)
-	a2 := dot(N, v2)
+	a1 := dot(v1, N)
+	a2 := dot(v2, N)
+	//fmt.Printf("a1: %v \n", a1)
+	//fmt.Printf("a2: %v \n", a2)
 	//Compute Optimized param
 	optim := 2 * (a1 - a2) / (e1.m + e2.m)
 	nv1 := Vect{v1.x - optim*e2.m*N.x, v1.y - optim*e2.m*N.y}
-	nv2 := Vect{v2.x - optim*e1.m*N.x, v2.y - optim*e1.m*N.y}
+	nv2 := Vect{v2.x + optim*e1.m*N.x, v2.y + optim*e1.m*N.y}
 
 	ne1 = Entity{e1.x + (1-ratio)*nv1.x, e1.y + (1-ratio)*nv1.y, nv1.x, nv1.y, e1.r, e1.m}
 	ne2 = Entity{e2.x + (1-ratio)*nv2.x, e2.y + (1-ratio)*nv2.y, nv2.x, nv2.y, e2.r, e2.m}
 
 	return ne1, ne2
+}
+
+func isWallCollision(e Entity, w, h int) (bool, float64) {
+	//First simulate move
+	nx := e.x + e.vx
+	ny := e.y + e.vy
+
 }

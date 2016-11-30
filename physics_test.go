@@ -72,11 +72,28 @@ func TestDot(t *testing.T) {
 
 func TestCollision(t *testing.T) {
 	e1 := Entity{1000, 1000, 100, 100, 100, 1}
-	e2 := Entity{1050, 1050, 0, 0, 100, 1}
+	e2 := Entity{1500, 1500, 0, 0, 100, 1}
 	e3 := Entity{1200, 1200, 0, 0, 100, 1}
+	e4 := Entity{1000, 1000, 200, 0, 100, 2}
+	e5 := Entity{1300, 1000, 0, 0, 100, 1}
 
 	b1, r1 := isCollision(e1, e2)
-	b2, r2 := isCollision(e1, e3)
+	if b1 {
+		t.Errorf("Error: expected false for %v, %v and got %v, %v", e1, e2, b1, r1)
+	}
 
-	fmt.Printf("r: %v %v, %v %v \n", b1, r1, b2, r2)
+	b2, r2 := isCollision(e1, e3)
+	if !b2 {
+		t.Errorf("Error: expected true for %v, %v and got %v, %v", e1, e3, b2, r2)
+	}
+	ne1, ne3 := computeMove(e1, e3, r2)
+	fmt.Printf("Final: %v %v, %v %v\n\n", e1, e3, ne1, ne3)
+
+	b3, r3 := isCollision(e4, e5)
+	if !b3 {
+		t.Errorf("Error: expected true for %v, %v and got %v, %v", e4, e5, b3, r3)
+	}
+	ne4, ne5 := computeMove(e4, e5, r3)
+	fmt.Printf("Final: %v %v, %v %v\n\n", e4, e5, ne4, ne5)
+
 }
