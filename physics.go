@@ -113,6 +113,26 @@ func computeMove(e1, e2 Entity, ratio float64) (ne1, ne2 Entity) {
 	optim := 2 * (a1 - a2) / (e1.m + e2.m)
 	nv1 := Vect{v1.x - optim*e2.m*N.x, v1.y - optim*e2.m*N.y}
 	nv2 := Vect{v2.x + optim*e1.m*N.x, v2.y + optim*e1.m*N.y}
+	//Check the impulse
+	N1 := distP(0, 0, nv1.x, nv1.y)
+	N2 := distP(0, 0, nv2.x, nv2.y)
+	if N1 < 100 && N1 > 0 {
+		nv1.x = nv1.x / N1 * 100
+		nv1.y = nv1.y / N1 * 100
+	}
+	if N1 == 0 {
+		nv1.x = -N.x * 100
+		nv1.y = -N.y * 100
+	}
+
+	if N2 < 100 && N2 > 0 {
+		nv2.x = nv2.x / N2 * 100
+		nv2.y = nv2.y / N2 * 100
+	}
+	if N2 == 0 {
+		nv2.x = N.x * 100
+		nv2.y = N.y * 100
+	}
 
 	ne1 = Entity{e1.x + (1-ratio)*nv1.x, e1.y + (1-ratio)*nv1.y, nv1.x, nv1.y, e1.r, e1.m}
 	ne2 = Entity{e2.x + (1-ratio)*nv2.x, e2.y + (1-ratio)*nv2.y, nv2.x, nv2.y, e2.r, e2.m}
