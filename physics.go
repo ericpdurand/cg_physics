@@ -141,8 +141,40 @@ func computeMove(e1, e2 Entity, ratio float64) (ne1, ne2 Entity) {
 }
 
 func isWallCollision(e Entity, w, h int) (bool, float64) {
+	result := false
+	ratio := float64(1)
 	//First simulate move
 	nx := e.x + e.vx
 	ny := e.y + e.vy
-
+	//Did we cross a wall?
+	if nx-e.r <0 {
+		r := nx-e.r / e.vx 
+		if r < ratio {
+			ratio = r
+			result = true
+		}  		
+	}
+	if ny-e.r <0 {
+                r := ny-e.r / e.vy 
+                if r < ratio {
+                        ratio = r
+                        result = true
+                }
+        }
+	if nx+e.r >= float64(w) {
+                r := (nx+e.r-float64(w)) / e.vx 
+                if r < ratio {
+                        ratio = r
+                        result = true
+                }
+        }
+        if ny+e.r >= float64(h) {
+                r := (ny+e.r-float64(h)) / e.vy 
+                if r < ratio {
+                        ratio = r
+                        result = true
+                }
+        }
+	return result,ratio
 }
+
